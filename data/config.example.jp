@@ -15,5 +15,4 @@ domains: {
 
 [discord]
 guildId: ""
-channelId: ""
 dmRoleId: ""

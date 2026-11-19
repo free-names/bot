@@ -38,6 +38,5 @@ export const config = {
   ) as Record<string, string>,
   pollSeconds: Number(file.getPath("github.pollSeconds", 60)),
   guildId: String(need("discord.guildId")),
-  channelId: String(need("discord.channelId")),
   dmRoleId: String(need("discord.dmRoleId")),
 };

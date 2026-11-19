@@ -17,18 +17,6 @@ import {
 async function announce(client: Client, repo: string, pull: Pull) {
   const payload = pullMessage(repo, pull);
   const refs: MessageRef[] = [];
-
-  const channel = await client.channels.fetch(config.channelId);
-
-  if (channel?.isSendable()) {
-    const message = await channel.send(payload);
-
-    refs.push({
-      channelId: channel.id,
-      messageId: message.id,
-    });
-  }
-
   const guild = await client.guilds.fetch(config.guildId);
 
   for (const userId of optedInUsers()) {
