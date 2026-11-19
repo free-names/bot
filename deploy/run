@@ -1,0 +1,11 @@
+#!/bin/sh
+# deploy/run
+exec 2>&1
+
+cd /srv/bot/free-names || exit 1
+
+# Run as clove rather than root. chpst doesn't change HOME, so set it for Deno's cache
+export HOME=/home/clove
+
+# Secrets live in .env and data/config.jp. Reads and writes are limited to ./data
+exec chpst -u clove /usr/bin/deno task start
