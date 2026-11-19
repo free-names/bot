@@ -3,7 +3,6 @@
 
 [github]
 org: free-names
-pollSeconds: 60
 
 # "domain": "repo name in the org"
 domains: {
@@ -12,6 +11,12 @@ domains: {
   "has-a.space": "has-a.space",
   "is-a.wiki": "is-a-wiki",
 }
+
+[webhook]
+# Local port that webhook.free-names.org forwards to
+port: 8787
+# Same secret as in the GitHub webhook settings
+secret: ""
 
 [discord]
 guildId: ""

@@ -29,7 +29,13 @@ async function github<T>(path: string): Promise<T> {
   });
 
   if (!response.ok) {
-    throw new Error(`GitHub ${response.status} on ${path}`);
+    const hint = response.status === 401
+      ? " (check GITHUB_TOKEN in .env)"
+      : response.status === 403 || response.status === 429
+      ? " (rate limited, or GITHUB_TOKEN lacks access)"
+      : "";
+
+    throw new Error(`GitHub ${response.status} on ${path}${hint}`);
   }
 
   return await response.json();
@@ -45,11 +51,4 @@ export async function getPull(domain: string, number: number) {
     if (String(error).includes("GitHub 404")) return null;
     throw error;
   }
-}
-
-// shortcut: only the 50 most recently updated PRs are checked, fine unless 50+ PRs change between two polls
-export async function recentPulls(domain: string) {
-  return await github<Pull[]>(
-    `/repos/${config.org}/${config.domains[domain]}/pulls?state=all&sort=updated&direction=desc&per_page=50`,
-  );
 }

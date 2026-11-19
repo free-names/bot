@@ -10,22 +10,36 @@ import {
 } from "discord.js";
 import { commands } from "./commands/index.ts";
 import { config } from "./config.ts";
-import { startWatcher } from "./watcher.ts";
+import { fail, log } from "./log.ts";
+import { startWebhook } from "./webhook.ts";
 
 const client = new Client({
   intents: [GatewayIntentBits.Guilds],
 });
 
 client.once(Events.ClientReady, async (readyClient) => {
-  // Guild commands show up instantly, unlike global ones
-  const guild = await readyClient.guilds.fetch(config.guildId);
+  log.info(`Logged in as ${readyClient.user.tag}`);
 
-  await guild.commands.set(
-    [...commands.values()].map((command) => command.data.toJSON()),
-  );
+  try {
+    // Guild commands show up instantly, unlike global ones
+    const guild = await readyClient.guilds.fetch(config.guildId);
 
-  console.log(`Logged in as ${readyClient.user.tag}`);
-  startWatcher(readyClient);
+    await guild.commands.set(
+      [...commands.values()].map((command) => command.data.toJSON()),
+    );
+
+    log.info(
+      `Registered ${commands.size} commands in ${guild.name}: ${
+        [...commands.keys()].map((name) => `/${name}`).join(", ")
+      }`,
+    );
+  } catch (error) {
+    fail(
+      `Could not register commands in guild ${config.guildId}. Check discord.guildId and that the bot is in that server: ${error}`,
+    );
+  }
+
+  startWebhook(readyClient);
 });
 
 client.on(Events.InteractionCreate, async (interaction) => {
@@ -34,10 +48,12 @@ client.on(Events.InteractionCreate, async (interaction) => {
   const command = commands.get(interaction.commandName);
   if (!command) return;
 
+  log.info(`${interaction.user.tag} ran ${interaction.toString()}`);
+
   try {
     await command.execute(interaction);
   } catch (error) {
-    console.error(`/${interaction.commandName} failed:`, error);
+    log.error(`/${interaction.commandName} failed`, error);
 
     const reply = {
       content: "Something broke running that command.",
@@ -52,4 +68,11 @@ client.on(Events.InteractionCreate, async (interaction) => {
   }
 });
 
-await client.login(config.discordToken);
+client.on(Events.Warn, (message) => log.warn(`discord.js: ${message}`));
+client.on(Events.Error, (error) => log.error("discord.js error", error));
+
+log.info("Connecting to Discord...");
+
+await client.login(config.discordToken).catch((error) =>
+  fail(`Discord login failed. Check DISCORD_TOKEN in .env: ${error.message}`)
+);

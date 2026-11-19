@@ -2,7 +2,7 @@
  * MIT Licence — (c) 2026-Present meowed-at.me, (c) 2026 is-a.dev
  */
 
-import { JPConfig } from "jpcl-lang";
+import { loadJp } from "./config.ts";
 
 export type MessageRef = {
   channelId: string;
@@ -14,19 +14,14 @@ export type TrackedPull = {
 };
 
 export type RepoState = {
-  lastSeen: number;
   open: Record<string, TrackedPull>;
 };
 
 // [users] section: userId -> true when opted into DMs
-export const prefs = await JPConfig.load("data/prefs.jp", {
-  missingOk: true,
-});
+export const prefs = await loadJp("data/prefs.jp", true);
 
-// One section per domain repo, e.g. [meowed-at.me]
-export const pulls = await JPConfig.load("data/pulls.jp", {
-  missingOk: true,
-});
+// One section per domain, e.g. [meowed-at.me]
+export const pulls = await loadJp("data/pulls.jp", true);
 
 export function wantsDms(userId: string) {
   return prefs.section("users", { create: true })[userId] === true;
@@ -51,7 +46,6 @@ export function optedInUsers() {
 export function repoState(repo: string): RepoState {
   const section = pulls.section(repo, { create: true });
 
-  section.lastSeen ??= 0;
   section.open ??= {};
 
   return section as RepoState;

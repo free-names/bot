@@ -8,6 +8,7 @@ import {
   SlashCommandBuilder,
 } from "discord.js";
 import { config } from "../config.ts";
+import { log } from "../log.ts";
 import { setDms } from "../store.ts";
 
 export const data = new SlashCommandBuilder()
@@ -41,6 +42,10 @@ export async function execute(interaction: ChatInputCommandInteraction) {
   }
 
   await setDms(interaction.user.id, enabled);
+
+  log.info(
+    `${interaction.user.tag} turned PR DMs ${enabled ? "on" : "off"}`,
+  );
 
   await interaction.reply({
     content: enabled

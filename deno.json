@@ -3,7 +3,7 @@
   "nodeModulesDir": "auto",
   "license": "MIT",
   "tasks": {
-    "start": "deno run --watch --allow-env --allow-net --env-file=.env --allow-read=./data --allow-write=./data src/start.ts",
+    "start": "deno run --watch --no-prompt --allow-env --allow-net --env-file=.env --allow-read=./data --allow-write=./data src/start.ts",
     "test": "deno test src/"
   },
   "imports": {
