@@ -2,63 +2,60 @@
  * MIT Licence — (c) 2026-Present meowed-at.me, (c) 2026 is-a.dev
  */
 
-import { EmbedBuilder } from "discord.js";
+import { ContainerBuilder, SectionBuilder } from "discord.js";
+import { colors, v2 } from "./card.ts";
 import type { Pull } from "./github.ts";
 
 function status(pull: Pull) {
   if (pull.merged_at) {
     return {
       label: "Merged",
-      color: 0x8957e5,
+      color: colors.purple,
     };
   }
 
   if (pull.state === "closed") {
     return {
       label: "Closed",
-      color: 0xda3633,
+      color: colors.red,
     };
   }
 
   if (pull.draft) {
     return {
       label: "Draft",
-      color: 0x6e7681,
+      color: colors.grey,
     };
   }
 
   return {
     label: "Open",
-    color: 0x238636,
+    color: colors.green,
   };
 }
 
 export function pullMessage(repo: string, pull: Pull) {
   const { label, color } = status(pull);
+  const opened = Math.floor(new Date(pull.created_at).getTime() / 1000);
 
-  const embed = new EmbedBuilder()
-    .setColor(color)
-    .setTitle(`#${pull.number} ${pull.title}`.slice(0, 256))
-    .setURL(pull.html_url)
-    .setAuthor({
-      name: pull.user.login,
-      iconURL: pull.user.avatar_url,
-    })
-    .addFields(
-      {
-        name: "Domain",
-        value: repo,
-        inline: true,
-      },
-      {
-        name: "Status",
-        value: label,
-        inline: true,
-      },
+  const section = new SectionBuilder()
+    .addTextDisplayComponents((display) =>
+      display.setContent(
+        [
+          `### [#${pull.number} ${pull.title}](${pull.html_url})`.slice(0, 300),
+          `**Domain:** ${repo}`,
+          `**Status:** ${label}`,
+          `-# by ${pull.user.login}, opened <t:${opened}:R>`,
+        ].join("\n"),
+      )
     )
-    .setTimestamp(new Date(pull.created_at));
+    .setThumbnailAccessory((thumbnail) =>
+      thumbnail.setURL(pull.user.avatar_url)
+    );
 
-  return {
-    embeds: [embed],
-  };
+  const container = new ContainerBuilder()
+    .setAccentColor(color)
+    .addSectionComponents(section);
+
+  return v2(container);
 }

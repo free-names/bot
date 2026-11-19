@@ -4,9 +4,9 @@
 
 import {
   type ChatInputCommandInteraction,
-  MessageFlags,
   SlashCommandBuilder,
 } from "discord.js";
+import { card, colors } from "../card.ts";
 import { config } from "../config.ts";
 import { log } from "../log.ts";
 import { setDms } from "../store.ts";
@@ -25,19 +25,23 @@ export async function execute(interaction: ChatInputCommandInteraction) {
   const enabled = interaction.options.getBoolean("enabled", true);
 
   if (!interaction.inCachedGuild()) {
-    await interaction.reply({
-      content: "Use this inside the server.",
-      flags: MessageFlags.Ephemeral,
-    });
+    await interaction.reply(
+      card("Use this inside the server.", {
+        color: colors.red,
+        ephemeral: true,
+      }),
+    );
     return;
   }
 
   // Turning DMs off is always allowed, turning them on needs the role
   if (enabled && !interaction.member.roles.cache.has(config.dmRoleId)) {
-    await interaction.reply({
-      content: `You need <@&${config.dmRoleId}> to get PR DMs.`,
-      flags: MessageFlags.Ephemeral,
-    });
+    await interaction.reply(
+      card(`You need <@&${config.dmRoleId}> to get PR DMs.`, {
+        color: colors.red,
+        ephemeral: true,
+      }),
+    );
     return;
   }
 
@@ -47,10 +51,15 @@ export async function execute(interaction: ChatInputCommandInteraction) {
     `${interaction.user.tag} turned PR DMs ${enabled ? "on" : "off"}`,
   );
 
-  await interaction.reply({
-    content: enabled
-      ? "PR DMs are on. Make sure your DMs from this server are open."
-      : "PR DMs are off.",
-    flags: MessageFlags.Ephemeral,
-  });
+  await interaction.reply(
+    card(
+      enabled
+        ? "🔔 PR DMs are on. Make sure your DMs from this server are open."
+        : "🔕 PR DMs are off.",
+      {
+        color: enabled ? colors.green : colors.grey,
+        ephemeral: true,
+      },
+    ),
+  );
 }

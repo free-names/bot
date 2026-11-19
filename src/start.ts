@@ -6,8 +6,8 @@ import {
   Client,
   Events,
   GatewayIntentBits,
-  MessageFlags,
 } from "discord.js";
+import { card, colors } from "./card.ts";
 import { commands } from "./commands/index.ts";
 import { config } from "./config.ts";
 import { fail, log } from "./log.ts";
@@ -55,15 +55,25 @@ client.on(Events.InteractionCreate, async (interaction) => {
   } catch (error) {
     log.error(`/${interaction.commandName} failed`, error);
 
-    const reply = {
-      content: "Something broke running that command.",
-      flags: MessageFlags.Ephemeral,
-    } as const;
+    const text = "Something broke running that command.";
 
-    if (interaction.replied || interaction.deferred) {
-      await interaction.followUp(reply);
+    if (interaction.replied) {
+      await interaction.followUp(
+        card(text, {
+          color: colors.red,
+          ephemeral: true,
+        }),
+      );
+    } else if (interaction.deferred) {
+      // Replaces the "thinking..." placeholder
+      await interaction.editReply(card(text, { color: colors.red }));
     } else {
-      await interaction.reply(reply);
+      await interaction.reply(
+        card(text, {
+          color: colors.red,
+          ephemeral: true,
+        }),
+      );
     }
   }
 });

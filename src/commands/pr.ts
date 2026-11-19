@@ -4,13 +4,14 @@
 
 import {
   type ChatInputCommandInteraction,
-  MessageFlags,
   SlashCommandBuilder,
 } from "discord.js";
+import { card, colors } from "../card.ts";
 import { config } from "../config.ts";
 import { getPull } from "../github.ts";
 import { pullMessage } from "../pullMessage.ts";
 import { trackMessage } from "../store.ts";
+import { domainOption } from "./domainOption.ts";
 
 export const data = new SlashCommandBuilder()
   .setName("pr")
@@ -22,19 +23,7 @@ export const data = new SlashCommandBuilder()
       .setMinValue(1)
       .setRequired(true)
   )
-  .addStringOption((option) =>
-    option
-      .setName("domain")
-      .setDescription("Which domain")
-      .setRequired(true)
-      .addChoices(
-        // Discord allows at most 25 choices
-        ...Object.keys(config.domains).slice(0, 25).map((domain) => ({
-          name: domain,
-          value: domain,
-        })),
-      )
-  );
+  .addStringOption(domainOption);
 
 export async function execute(interaction: ChatInputCommandInteraction) {
   const number = interaction.options.getInteger("number", true);
@@ -43,10 +32,12 @@ export async function execute(interaction: ChatInputCommandInteraction) {
   const pull = await getPull(domain, number);
 
   if (!pull) {
-    await interaction.reply({
-      content: `No PR #${number} in ${config.org}/${config.domains[domain]}.`,
-      flags: MessageFlags.Ephemeral,
-    });
+    await interaction.reply(
+      card(`No PR #${number} in ${config.org}/${config.domains[domain]}.`, {
+        color: colors.grey,
+        ephemeral: true,
+      }),
+    );
     return;
   }
 
