@@ -1,10 +1,10 @@
 {
   "version": "5",
   "specifiers": {
-    "jsr:@std/assert@1": "1.0.19",
+    "jsr:@std/assert@^1.0.19": "1.0.19",
     "jsr:@std/internal@^1.0.12": "1.0.14",
     "npm:discord.js@^14.28.1": "14.28.1",
-    "npm:jpcl-lang@^1.1.1": "1.1.1"
+    "npm:jpcl-lang@^1.2.0": "1.2.0"
   },
   "jsr": {
     "@std/assert@1.0.19": {
@@ -128,8 +128,8 @@
     "fast-deep-equal@3.1.3": {
       "integrity": "sha512-f3qQ9oQy9j2AhBe/H9VC91wLmKBCCU/gDOnKNAYG5hswO7BLKj09Hc5HYNz9cGI++xlpDCIgDaitVs03ATR84Q=="
     },
-    "jpcl-lang@1.1.1": {
-      "integrity": "sha512-WyED4bjuNuWr+oKi0+3iIY2EinGk/VsZj4AP4XY8PrvPhzCL3aSBJSZcZ5pDz2Myf+JW8AN5omEIjSyjGMupIQ==",
+    "jpcl-lang@1.2.0": {
+      "integrity": "sha512-ChlK4ZdPq8Tp/+TQazJqE+HztDIiPS98h5F4EvNns662lt3/r7754ye7cthypODvsAketUcaTthUHgzm1OWrlw==",
       "bin": true
     },
     "lodash.snakecase@4.1.1": {
@@ -159,9 +159,9 @@
   },
   "workspace": {
     "dependencies": [
-      "jsr:@std/assert@1",
+      "jsr:@std/assert@^1.0.19",
       "npm:discord.js@^14.28.1",
-      "npm:jpcl-lang@^1.1.1"
+      "npm:jpcl-lang@^1.2.0"
     ]
   }
 }

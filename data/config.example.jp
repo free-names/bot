@@ -1,10 +1,10 @@
-# data/config.example.jp
-# Copy to data/config.jp and fill in. Quote Discord IDs.
+$* data/config.example.jp
+   Copy to data/config.jp and fill in. Quote Discord IDs. *$
 
 [github]
 org: free-names
 
-# "domain": "repo name in the org"
+$$ "domain": "repo name in the org"
 domains: {
   "meowed-at.me": "meowed-at.me",
   "is-a.stupid.cat": "is-a.stupid.cat",
@@ -13,9 +13,9 @@ domains: {
 }
 
 [webhook]
-# Local port that webhook.free-names.org forwards to
+$$ Local port that webhook.free-names.org forwards to
 port: 8787
-# Same secret as in the GitHub webhook settings
+$$ Same secret as in the GitHub webhook settings
 secret: ""
 
 [discord]
